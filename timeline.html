@@ -38,6 +38,7 @@
   </div>
 </footer>
 
+<script src="data.js"></script>
 <script>
 (function(){
   var trip = window.TRIP;
@@ -58,10 +59,7 @@
     html += "<ol class=\"tl-list\">";
     d.stops.forEach(function(s){
       var p = trip.places ? trip.places[s.key] : null;
-      var gmaps = p ? p.gmaps : "";
       var travel = s.travel || {};
-      html += "<li class=\"tl-item\">";
-      // travel connector
       if(travel.name){
         html += "<div class=\"tl-travel\">";
         html += "<span class=\"tl-travel-mode\">"+modeLabel(travel.mode, travel.min)+"</span> ";
@@ -76,6 +74,14 @@
       html += "</div>";
       html += "<div class=\"tl-card-name\">"+s.name+"</div>";
       html += "<div class=\"tl-card-action\">"+s.action+"</div>";
+      if(p && p.options){
+        html += "<div class=\"tl-options\">";
+        html += "<span class=\"tl-options-label\">Pick one:</span> ";
+        p.options.forEach(function(o){
+          html += "<a class=\"tl-free-chip\" href=\""+o.gmaps+"\" target=\"_blank\" rel=\"noopener\">"+o.name+"</a>";
+        });
+        html += "</div>";
+      }
       if(p && p.gmaps){
         html += "<div class=\"tl-card-links\"><a href=\""+p.gmaps+"\" target=\"_blank\" rel=\"noopener\">📍 Open in Google Maps</a></div>";
       }
@@ -83,14 +89,13 @@
       html += "</li>";
     });
     html += "</ol>";
-    // free time
     if(d.free && d.free.length){
       html += "<div class=\"tl-free\">";
-      html += "<span class=\"tl-free-label">Free time nearby:</span> ";
+      html += "<span class=\"tl-free-label\">Free time nearby:</span> ";
       d.free.forEach(function(k){
         var p = trip.places ? trip.places[k] : null;
         if(p){
-          html += "<a class=\"tl-free-chip\" href=\""+p.gmaps+"\" target=\"blank\" rel=\"noopener\">"+p.name+"</a>";
+          html += "<a class=\"tl-free-chip\" href=\""+p.gmaps+"\" target=\"_blank\" rel=\"noopener\">"+p.name+"</a>";
         }
       });
       html += "</div>";

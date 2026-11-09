@@ -216,3 +216,9 @@ main{max-width:1100px;margin:0 auto;padding:0 22px 40px}
   .header-inner{padding:12px 14px}
   main{padding:0 14px 30px}
 }
+
+/* ===== Options (dinner choice) ===== */
+.tl-travel-from{color:var(--muted)}
+.tl-options,.slide-options{margin:10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tl-options-label{color:var(--muted);font-size:.9rem;font-weight:600}
+.tl-options .tl-free-chip,.slide-options .tl-free-chip{background:var(--accent);color:#1a1205;font-weight:600}
