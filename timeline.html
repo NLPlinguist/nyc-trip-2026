@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New York City Trip · Timeline</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗽</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-city">NYC</span>
+      <span class="brand-sub">Trip to New York City</span>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Overview</a>
+      <a href="timeline.html" class="nav-link active">Timeline</a>
+      <a href="slideshow.html" class="nav-link">Slideshow</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-head">
+    <h1>Day-by-day timeline</h1>
+    <p class="page-sub">Travel times are approximate, based on typical NYC taxi / walking distances.</p>
+  </div>
+
+  <div id="timeline"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Our NYC Trip · Nov 16–18, 2026</span>
+    <span class="footer-links"><a href="index.html">Overview</a><a href="slideshow.html">Slideshow</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var trip = window.TRIP;
+  var wrap = document.getElementById("timeline");
+
+  function modeLabel(m, min){
+    if(!m) return "";
+    if(m==="flight") return "✈ Flight";
+    if(m==="walk") return "🚶 " + min + " min walk";
+    if(m==="taxi") return "🚕 ~" + min + " min taxi/Uber";
+    return m;
+  }
+
+  var html = "";
+  trip.days.forEach(function(d){
+    html += "<section class=\"tl-day\">";
+    html += "<div class=\"tl-day-head\"><span class=\"tl-day-label\">"+d.label+"</span><span class=\"tl-day-date\">"+d.date+"</span></div>";
+    html += "<ol class=\"tl-list\">";
+    d.stops.forEach(function(s){
+      var p = trip.places ? trip.places[s.key] : null;
+      var gmaps = p ? p.gmaps : "";
+      var travel = s.travel || {};
+      html += "<li class=\"tl-item\">";
+      // travel connector
+      if(travel.name){
+        html += "<div class=\"tl-travel\">";
+        html += "<span class=\"tl-travel-mode\">"+modeLabel(travel.mode, travel.min)+"</span> ";
+        html += "<span class=\"tl-travel-from\">from "+travel.name+"</span>";
+        if(travel.note){ html += " <span class=\"tl-travel-note\">("+travel.note+")</span>"; }
+        html += "</div>";
+      }
+      html += "<div class=\"tl-card\">";
+      html += "<div class=\"tl-card-top\">";
+      html += "<span class=\"tl-time\">"+s.time+"</span>";
+      html += "<span class=\"tl-type\">"+(p?p.type:"")+"</span>";
+      html += "</div>";
+      html += "<div class=\"tl-card-name\">"+s.name+"</div>";
+      html += "<div class=\"tl-card-action\">"+s.action+"</div>";
+      if(p && p.gmaps){
+        html += "<div class=\"tl-card-links\"><a href=\""+p.gmaps+"\" target=\"_blank\" rel=\"noopener\">📍 Open in Google Maps</a></div>";
+      }
+      html += "</div>";
+      html += "</li>";
+    });
+    html += "</ol>";
+    // free time
+    if(d.free && d.free.length){
+      html += "<div class=\"tl-free\">";
+      html += "<span class=\"tl-free-label">Free time nearby:</span> ";
+      d.free.forEach(function(k){
+        var p = trip.places ? trip.places[k] : null;
+        if(p){
+          html += "<a class=\"tl-free-chip\" href=\""+p.gmaps+"\" target=\"blank\" rel=\"noopener\">"+p.name+"</a>";
+        }
+      });
+      html += "</div>";
+    }
+    html += "</section>";
+  });
+
+  wrap.innerHTML = html;
+})();
+</script>
+</body>
+</html>

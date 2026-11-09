@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New York City Trip · Slideshow</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗽</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-city">NYC</span>
+      <span class="brand-sub">Trip to New York City</span>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Overview</a>
+      <a href="timeline.html" class="nav-link">Timeline</a>
+      <a href="slideshow.html" class="nav-link active">Slideshow</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-head">
+    <h1>Stop by stop</h1>
+    <p class="page-sub">Tap a photo to open its Google Maps location. Travel times are approximate.</p>
+  </div>
+
+  <div class="slide-stage" id="stage">
+    <div class="slide" id="slide"></div>
+    <div class="slide-nav">
+      <button class="slide-btn" id="prev">‹</button>
+      <div class="slide-counter" id="counter">1 / 1</div>
+      <button class="slide-btn" id="next">›</button>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Our NYC Trip · Nov 16–18, 2026</span>
+    <span class="footer-links"><a href="index.html">Overview</a><a href="timeline.html">Timeline</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var slides = window.TRIP.slides;
+  var idx = 0;
+  var stage = document.getElementById("slide");
+  var counter = document.getElementById("counter");
+  document.getElementById("prev").onclick = function(){ idx=(idx-1+slides.length)%slides.length; render(); };
+  document.getElementById("next").onclick = function(){ idx=(idx+1)%slides.length; render(); };
+
+  function render(){
+    var s = slides[idx];
+    var travel = s.travel||{};
+    var travelLine = travel.name ? "Getting here: from " + travel.name : "";
+    var travelMode = travel.mode==="walk" ? " (~"+travel.min+" min walk)"
+                    : travel.mode==="taxi" ? " (~"+travel.min+" min by taxi)"
+                    : travel.mode==="flight" ? " (by flight)" : "";
+    stage.innerHTML =
+      "<div class=\"slide-img-wrap\">" +
+        "<img src=\"assets/"+s.photo+"\" alt=\""+s.name+"\">" +
+        "<div class=\"slide-img-label\">"+s.name+"</div>" +
+      "</div>" +
+      "<div class=\"slide-info\">" +
+        "<div class=\"slide-day\">"+s.day+" · "+s.time+"</div>" +
+        "<h2 class=\"slide-name\">"+s.name+"</h2>" +
+        "<div class=\"slide-type\">"+s.type+"</div>" +
+        "<p class=\"slide-action\">"+s.action+"</p>" +
+        (travelLine ? "<p class=\"slide-travel\">"+travelLine+travelMode+"</p>" : "") +
+        (s.hours ? "<p class=\"slide-hours\">🕒 "+s.hours+"</p>" : "") +
+        "<div class=\"slide-links\">" +
+          "<a href=\""+s.gmaps+"\" target=\"_blank\" rel=\"noopener\">📍 Google Maps</a>" +
+          (s.website ? "<a href=\""+s.website+"\" target=\"_blank\" rel=\"noopener\">🔗 Website</a>" : "") +
+        "</div>" +
+      "</div>";
+    counter.textContent = (idx+1) + " / " + slides.length;
+  }
+  render();
+})();
+</script>
+</body>
+</html>
