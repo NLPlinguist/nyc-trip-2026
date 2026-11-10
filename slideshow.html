@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>New York City Trip · Slideshow</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗽</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,15 +28,15 @@
 <main>
   <div class="page-head">
     <h1>Stop by stop</h1>
-    <p class="page-sub">Tap a photo to open its Google Maps location. Travel times are approximate.</p>
+    <p class="page-sub">One big picture for each place we'll go — with why it's exciting, how long it takes to get there, and links to open in Google Maps.</p>
   </div>
 
   <div class="slide-stage" id="stage">
     <div class="slide" id="slide"></div>
     <div class="slide-nav">
-      <button class="slide-btn" id="prev">‹</button>
+      <button class="slide-btn" id="prev" aria-label="Previous">‹</button>
       <div class="slide-counter" id="counter">1 / 1</div>
-      <button class="slide-btn" id="next">›</button>
+      <button class="slide-btn" id="next" aria-label="Next">›</button>
     </div>
   </div>
 </main>
@@ -55,6 +58,21 @@
   document.getElementById("prev").onclick = function(){ idx=(idx-1+slides.length)%slides.length; render(); };
   document.getElementById("next").onclick = function(){ idx=(idx+1)%slides.length; render(); };
 
+  function gapBlock(gap){
+    if(!gap) return "";
+    var h = "<div class=\"slide-gap\">";
+    h += "<span class=\"tl-gap-label\">✨ " + gap.text + "</span>";
+    h += "<span class=\"tl-gap-sub\">Ideas to fill it:</span> ";
+    (gap.suggestions||[]).forEach(function(k){
+      var p = window.TRIP.places ? window.TRIP.places[k] : null;
+      if(p){
+        h += "<a class=\"tl-free-chip\" href=\"" + p.gmaps + "\" target=\"_blank\" rel=\"noopener\">"+p.name+"</a>";
+      }
+    });
+    h += "</div>";
+    return h;
+  }
+
   function render(){
     var s = slides[idx];
     var travel = s.travel||{};
@@ -67,10 +85,11 @@
       opts = "<div class=\"slide-options\">";
       opts += "<span class=\"tl-options-label\">Pick one:</span> ";
       s.options.forEach(function(o){
-        opts += "<a class=\"tl-free-chip\" href=\""+o.gmaps+"\" target=\"_blank\" rel=\"noopener\">"+o.name+"</a>";
+        opts += "<a class=\"tl-free-chip\" href=\"" + o.gmaps + "\" target=\"_blank\" rel=\"noopener\">"+o.name+"</a>";
       });
       opts += "</div>";
     }
+    var note = s.note ? "<p class=\"slide-note\">💡 " + s.note + "</p>" : "";
     stage.innerHTML =
       "<div class=\"slide-img-wrap\">" +
         "<img src=\"assets/"+s.photo+"\" alt=\""+s.name+"\">" +
@@ -81,9 +100,11 @@
         "<h2 class=\"slide-name\">"+s.name+"</h2>" +
         "<div class=\"slide-type\">"+s.type+"</div>" +
         "<p class=\"slide-action\">"+s.action+"</p>" +
+        note +
         (travelLine ? "<p class=\"slide-travel\">"+travelLine+travelMode+"</p>" : "") +
         (s.hours ? "<p class=\"slide-hours\">🕒 "+s.hours+"</p>" : "") +
         opts +
+        "<div class=\"slide-gap-wrap\">" + gapBlock(s.gap) + "</div>" +
         "<div class=\"slide-links\">" +
           "<a href=\""+s.gmaps+"\" target=\"_blank\" rel=\"noopener\">📍 Google Maps</a>" +
           (s.website ? "<a href=\""+s.website+"\" target=\"_blank\" rel=\"noopener\">🔗 Website</a>" : "") +
